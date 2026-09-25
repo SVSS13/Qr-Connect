@@ -1,0 +1,47 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+
+    <!-- Stylized Big Q (Outer ring + Tail) -->
+    <!-- Outer ring of Q -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="10"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M 60,14 A 44,44 0 1,0 96,82" />
+
+    <!-- Tail of Big Q -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M 76,76 L 104,104 A 4,4 0 0,0 110,104 L 110,98 A 4,4 0 0,0 104,92 L 86,74 Z" />
+
+    <!-- Big Q Accent Dot -->
+    <path
+        android:fillColor="#10B981"
+        android:pathData="M 60,8 A 6,6 0 1,0 60,20 A 6,6 0 1,0 60,8 Z" />
+
+    <!-- Modern Bold "R" centered inside the Big Q counter -->
+    <!-- Vertical stem of R -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M 44,36 H 54 V 80 H 44 Z" />
+
+    <!-- Top Bowl of R -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M 52,36 H 68 C 76,36 82,42 82,50 C 82,58 76,64 68,64 H 52 Z M 54,44 V 56 H 66 C 70,56 72,53 72,50 C 72,47 70,44 66,44 Z" />
+
+    <!-- Diagonal Leg of R -->
+    <path
+        android:fillColor="#10B981"
+        android:pathData="M 62,60 L 78,80 H 66 L 52,62 Z" />
+
+</vector>

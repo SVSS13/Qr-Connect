@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">QR Connect</string>
+    <string name="login_title">QR CONNECT</string>
+    <string name="login_subtitle">Owner Portal</string>
+    <string name="name_hint">Full Name</string>
+    <string name="email_hint">Email address</string>
+    <string name="password_hint">Password (min 8 characters)</string>
+    <string name="login_button">Sign In</string>
+    <string name="register_button">Create Account</string>
+    <string name="dont_have_account">Don\'t have an account? Create one</string>
+    <string name="already_have_account">Already have an account? Sign In</string>
+    
+    <string name="dashboard_title">QR Connect</string>
+    <string name="add_card">Add New Card</string>
+    <string name="card_name_hint">Card Name (e.g. My Car)</string>
+    <string name="card_type_hint">Type (car, home, other)</string>
+    
+    <string name="card_details_title">Card Details</string>
+    <string name="manage_actions">Actions &amp; Settings</string>
+    <string name="view_events">View Activity Feed</string>
+    <string name="edit_card">Edit Card</string>
+    <string name="share_qr">Share QR Link</string>
+    <string name="delete_card">Delete Card</string>
+    
+    <string name="actions_title">Dynamic Actions</string>
+    <string name="add_action">Add Action</string>
+    <string name="action_label_hint">Action Label (e.g. Vehicle is Blocking)</string>
+    <string name="action_type_hint">Type (alert, message, voice, location)</string>
+    
+    <string name="events_title">Activity &amp; Messages</string>
+    <string name="no_events">No activity recorded yet</string>
+    <string name="no_cards">No QR cards yet. Tap + to add your first card.</string>
+
+    <!-- Utilities / Tools -->
+    <string name="tools_title">Utilities &amp; Tools</string>
+    <string name="qr_studio_title">QR Code Studio</string>
+    <string name="qr_studio_desc">Generate and preview high-res printable QR code</string>
+    <string name="diagnostics_title">Server Diagnostics</string>
+    <string name="diagnostics_desc">Test connection latency and health endpoint</string>
+    <string name="broadcast_title">Test Notification</string>
+    <string name="broadcast_desc">Verify FCM heads-up push and alert sounds</string>
+    <string name="account_info_title">Owner Profile</string>
+</resources>

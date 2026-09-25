@@ -1,0 +1,72 @@
+/* QR Connect Scanner — Ultra-Modern Design Styles */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Action button card interactions */
+.action-card {
+    will-change: transform, box-shadow;
+}
+
+.action-card:hover {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+}
+
+.action-card:active {
+    transform: scale(0.98);
+}
+
+/* Custom Scrollbar for textareas */
+textarea::-webkit-scrollbar {
+    width: 6px;
+}
+
+textarea::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+textarea::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.2);
+    border-radius: 9999px;
+}
+
+/* Spinner */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+    animation: spin 0.75s linear infinite;
+}
+
+/* Floating Timer Pill Transitions */
+#timer-pill {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Audio Wave & Media Player styling */
+audio {
+    height: 40px;
+    filter: invert(0.9) hue-rotate(180deg);
+}
+
+/* Chip buttons */
+.chip-btn {
+    transition: all 0.15s ease;
+}
+
+.chip-btn:active {
+    transform: scale(0.96);
+}
