@@ -77,6 +77,18 @@ app.include_router(messages.router, prefix="/api/owner", tags=["messages"])
 app.include_router(public.router, tags=["scanner"])
 
 
+@app.get("/", tags=["system"])
+async def root():
+    """Root endpoint for QR Connect API."""
+    return {
+        "name": "QR Connect API",
+        "status": "online",
+        "docs": "/docs",
+        "health": "/health",
+        "version": "1.0.0"
+    }
+
+
 @app.get("/health", tags=["system"])
 @app.get("/healthz", tags=["system"])
 async def health_check():

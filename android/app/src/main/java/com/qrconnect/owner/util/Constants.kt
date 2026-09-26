@@ -21,7 +21,8 @@ object Constants {
     const val MODE_PROD_VANITY = "vanity"
 
     const val URL_DEV_LOCALHOST = "http://localhost:8000/q/"
-    const val URL_PROD_RENDER = "https://qr-connect.onrender.com/q/"
+    const val URL_PROD_RENDER = "https://qrconnect-api.onrender.com/q/"
     const val URL_PROD_VANITY = "https://qrconnect.me/q/"
+    const val BASE_URL_PROD_RENDER = "https://qrconnect-api.onrender.com/"
 }
 
