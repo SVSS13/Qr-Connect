@@ -78,6 +78,7 @@ app.include_router(public.router, tags=["scanner"])
 
 
 @app.get("/health", tags=["system"])
+@app.get("/healthz", tags=["system"])
 async def health_check():
     """Health check endpoint for Render and monitoring."""
     return {"status": "healthy", "service": "qr-connect-api", "version": "1.0.0"}
