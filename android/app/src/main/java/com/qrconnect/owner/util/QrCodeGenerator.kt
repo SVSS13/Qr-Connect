@@ -55,7 +55,7 @@ object QrCodeGenerator {
 
     fun getQrScanUrl(token: String, context: Context): String {
         val prefs = context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE)
-        val mode = prefs.getString(Constants.KEY_QR_HOST_MODE, Constants.MODE_DEV_LOCALHOST)
+        val mode = prefs.getString(Constants.KEY_QR_HOST_MODE, Constants.MODE_PROD_RENDER)
         val customHost = prefs.getString(Constants.KEY_CUSTOM_QR_HOST, "")?.trim().orEmpty()
 
         if (customHost.isNotBlank()) {

@@ -1,9 +1,8 @@
 package com.qrconnect.owner.util
 
 object Constants {
-    // Using http://localhost:8000/ with `adb reverse tcp:8000 tcp:8000` enables
-    // direct zero-config USB connection from physical device to host backend server.
-    const val DEFAULT_BASE_URL = "http://localhost:8000/"
+    // Connected to live production Render deployment
+    const val DEFAULT_BASE_URL = "https://qrconnect-api.onrender.com/"
     const val PREFS_NAME = "qr_connect_prefs"
     const val KEY_ACCESS_TOKEN = "access_token"
     const val KEY_REFRESH_TOKEN = "refresh_token"

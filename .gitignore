@@ -60,6 +60,7 @@ backend/uploads/videos/*
 !backend/uploads/videos/.gitkeep
 
 # Android
+*.apk
 .gradle/
 build/
 */build/
