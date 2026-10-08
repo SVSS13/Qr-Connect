@@ -60,50 +60,6 @@ class QRConnectMessagingService : FirebaseMessagingService() {
 
         val cardId = remoteMessage.data["card_id"]
 
-        showNotification(title, body, cardId)
-    }
-
-    private fun showNotification(title: String, body: String, cardId: String?) {
-        val intent = Intent(this, EventsActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            if (!cardId.isNullOrBlank()) {
-                putExtra(EventsActivity.EXTRA_CARD_ID, cardId)
-            }
-        }
-
-        val pendingIntent = PendingIntent.getActivity(
-            this,
-            System.currentTimeMillis().toInt(),
-            intent,
-            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-
-        val notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
-            .setContentTitle(title)
-            .setContentText(body)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(body))
-            .setAutoCancel(true)
-            .setSound(defaultSoundUri)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(pendingIntent)
-
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                CHANNEL_ID,
-                CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_HIGH
-            ).apply {
-                description = "Urgent alerts, visitor messages, and interactions from QR Connect cards"
-                enableVibration(true)
-            }
-            notificationManager.createNotificationChannel(channel)
-        }
-
-        notificationManager.notify(System.currentTimeMillis().toInt(), notificationBuilder.build())
+        com.qrconnect.owner.util.NotificationHelper.showNotification(this, title, body, cardId)
     }
 }

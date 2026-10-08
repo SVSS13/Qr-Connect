@@ -18,8 +18,33 @@ from sqlalchemy.orm import selectinload
 
 from app.core.database import get_db
 from app.models.event import Event
+from app.models.media_file import MediaFile
 from app.models.qr_action import QrAction
 from app.models.qr_card import QrCard
+
+
+def optimize_image_bytes(raw_bytes: bytes, max_dim: int = 1600, quality: int = 82) -> tuple[bytes, str]:
+    """Compress/resize photos to keep PostgreSQL storage lightweight (~150-250KB)."""
+    try:
+        import io
+        from PIL import Image, ImageOps
+        img = Image.open(io.BytesIO(raw_bytes))
+        try:
+            img = ImageOps.exif_transpose(img)
+        except Exception:
+            pass
+        if img.mode in ("RGBA", "P"):
+            img = img.convert("RGB")
+        w, h = img.size
+        if max(w, h) > max_dim:
+            scale = max_dim / float(max(w, h))
+            new_size = (int(w * scale), int(h * scale))
+            img = img.resize(new_size, Image.Resampling.LANCZOS)
+        out_buf = io.BytesIO()
+        img.save(out_buf, format="JPEG", quality=quality, optimize=True)
+        return out_buf.getvalue(), "image/jpeg"
+    except Exception:
+        return raw_bytes, "image/jpeg"
 from app.schemas.public import (
     ActionResultResponse,
     PublicActionInfo,
@@ -459,8 +484,20 @@ async def upload_photo(
             detail="Photo file too large (maximum 20MB allowed)",
         )
 
+    # Optimize photo bytes to keep database storage lightweight and fast
+    optimized_bytes, optimized_mime = optimize_image_bytes(content_bytes)
+
     async with aiofiles.open(dest_path, "wb") as f:
-        await f.write(content_bytes)
+        await f.write(optimized_bytes)
+
+    # Persist in PostgreSQL to survive Render container restarts
+    media_file = MediaFile(
+        file_path=f"uploads/photos/{filename}",
+        mime_type=optimized_mime,
+        file_size=len(optimized_bytes),
+        data=optimized_bytes,
+    )
+    db.add(media_file)
 
     storage_url = f"/uploads/photos/{filename}"
     cleaned_caption = caption.strip() if caption else None
@@ -536,6 +573,16 @@ async def upload_video(
 
     async with aiofiles.open(dest_path, "wb") as f:
         await f.write(content_bytes)
+
+    # Persist in PostgreSQL to survive Render container restarts
+    if len(content_bytes) <= 35 * 1024 * 1024:
+        media_file = MediaFile(
+            file_path=f"uploads/videos/{filename}",
+            mime_type=content_type,
+            file_size=len(content_bytes),
+            data=content_bytes,
+        )
+        db.add(media_file)
 
     storage_url = f"/uploads/videos/{filename}"
     cleaned_caption = caption.strip() if caption else None

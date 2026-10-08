@@ -23,6 +23,7 @@ from app.models.qr_card import QrCard  # noqa: F401
 from app.models.qr_action import QrAction  # noqa: F401
 from app.models.session import ScanSession  # noqa: F401
 from app.models.event import Event  # noqa: F401
+from app.models.media_file import MediaFile  # noqa: F401
 from app.models.messages_voice import MessagesVoice  # noqa: F401
 from app.models.settings import UserSettings  # noqa: F401
 

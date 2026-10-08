@@ -12,5 +12,7 @@ data class EventDto(
     @SerializedName("latitude") val latitude: Double? = null,
     @SerializedName("longitude") val longitude: Double? = null,
     @SerializedName("address") val address: String? = null,
+    @SerializedName("card_name") val cardName: String? = null,
+    @SerializedName("card_id") val cardId: String? = null,
     @SerializedName("created_at") val createdAt: String
 ) : Serializable

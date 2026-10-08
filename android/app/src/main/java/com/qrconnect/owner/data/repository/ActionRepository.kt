@@ -9,13 +9,32 @@ import com.qrconnect.owner.util.NetworkResult
 class ActionRepository {
     private val api = ApiClient.actionsApi
 
+    private fun extractErrorMessage(response: retrofit2.Response<*>): String {
+        val errBody = try {
+            response.errorBody()?.string()
+        } catch (_: Exception) {
+            null
+        }
+        if (!errBody.isNullOrBlank()) {
+            try {
+                val json = org.json.JSONObject(errBody)
+                if (json.has("detail")) {
+                    return json.optString("detail")
+                }
+            } catch (_: Exception) {
+                return errBody
+            }
+        }
+        return response.message().ifBlank { "HTTP ${response.code()}" }
+    }
+
     suspend fun getActions(cardId: String): NetworkResult<List<QrActionDto>> {
         return try {
             val response = api.listActions(cardId)
             if (response.isSuccessful && response.body() != null) {
                 NetworkResult.Success(response.body()!!)
             } else {
-                NetworkResult.Error("Failed to load actions: ${response.message()}", response.code())
+                NetworkResult.Error("Failed to load actions: ${extractErrorMessage(response)}", response.code())
             }
         } catch (e: Exception) {
             NetworkResult.Error("Network error: ${e.localizedMessage ?: "Unknown error"}")
@@ -32,7 +51,7 @@ class ActionRepository {
             if (response.isSuccessful && response.body() != null) {
                 NetworkResult.Success(response.body()!!)
             } else {
-                NetworkResult.Error("Failed to add action: ${response.message()}", response.code())
+                NetworkResult.Error("Failed to add action: ${extractErrorMessage(response)}", response.code())
             }
         } catch (e: Exception) {
             NetworkResult.Error("Network error: ${e.localizedMessage ?: "Unknown error"}")
@@ -45,7 +64,7 @@ class ActionRepository {
             if (response.isSuccessful && response.body() != null) {
                 NetworkResult.Success(response.body()!!)
             } else {
-                NetworkResult.Error("Failed to update action: ${response.message()}", response.code())
+                NetworkResult.Error("Failed to update action: ${extractErrorMessage(response)}", response.code())
             }
         } catch (e: Exception) {
             NetworkResult.Error("Network error: ${e.localizedMessage ?: "Unknown error"}")
@@ -58,7 +77,7 @@ class ActionRepository {
             if (response.isSuccessful) {
                 NetworkResult.Success(Unit)
             } else {
-                NetworkResult.Error("Failed to delete action: ${response.message()}", response.code())
+                NetworkResult.Error("Failed to delete action: ${extractErrorMessage(response)}", response.code())
             }
         } catch (e: Exception) {
             NetworkResult.Error("Network error: ${e.localizedMessage ?: "Unknown error"}")

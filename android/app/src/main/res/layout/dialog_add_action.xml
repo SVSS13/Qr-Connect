@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -14,31 +15,87 @@
         android:textSize="20sp"
         android:textStyle="bold" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="Select Action Type:"
+        android:textColor="@color/on_surface_variant"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroupActionType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        app:selectionRequired="true"
+        app:singleSelection="true">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipPhoto"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📸 Photo Note" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipVideo"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🎥 Video Note" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipAlert"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="🚨 Quick Alert" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipMessage"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="💬 Message" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipVoice"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🎙️ Voice Note" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipLocation"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📍 Location" />
+    </com.google.android.material.chip.ChipGroup>
+
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="8dp"
         android:hint="@string/action_label_hint">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etActionLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textCapSentences" />
+            android:inputType="textCapSentences"
+            android:text="Urgent Notification" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/tvActionHint"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="@string/action_type_hint">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etActionType"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="text"
-            android:text="alert" />
-    </com.google.android.material.textfield.TextInputLayout>
+        android:text="Visitors can trigger this action when scanning your QR code."
+        android:textColor="@color/on_surface_variant"
+        android:textSize="12sp" />
 </LinearLayout>

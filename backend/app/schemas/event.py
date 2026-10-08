@@ -19,6 +19,8 @@ class EventResponse(BaseModel):
     latitude: float | None = None
     longitude: float | None = None
     address: str | None = None
+    card_name: str | None = None
+    card_id: uuid.UUID | None = None
     created_at: datetime
 
 

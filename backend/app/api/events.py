@@ -37,7 +37,7 @@ async def list_events(
 ) -> list[EventResponse]:
     """List activity events across all QR cards belonging to the owner."""
     query = (
-        select(Event)
+        select(Event, QrCard.id.label("qr_card_id"), QrCard.name.label("qr_card_name"))
         .options(selectinload(Event.voice))
         .join(ScanSession, Event.session_id == ScanSession.id)
         .join(QrCard, ScanSession.qr_card_id == QrCard.id)
@@ -53,12 +53,14 @@ async def list_events(
         query = query.where(Event.type == event_type)
 
     result = await db.execute(query)
-    events = result.scalars().all()
+    rows = result.all()
     response = []
-    for e in events:
-        item = EventResponse.model_validate(e)
-        if e.type == "voice" and e.voice and e.voice.content:
-            item.content = e.voice.content
+    for event_obj, qcard_id, qcard_name in rows:
+        item = EventResponse.model_validate(event_obj)
+        item.card_id = qcard_id
+        item.card_name = qcard_name
+        if event_obj.type == "voice" and event_obj.voice and event_obj.voice.content:
+            item.content = event_obj.voice.content
         response.append(item)
     return response
 

@@ -108,6 +108,15 @@ class VoiceService:
         file_content = await file.read()
         storage_url = await self.storage.save_file(file_content, filename, base_mime)
 
+        from app.models.media_file import MediaFile
+        media_file = MediaFile(
+            file_path=f"uploads/voice/{filename}",
+            mime_type=base_mime,
+            file_size=len(file_content),
+            data=file_content,
+        )
+        self.db.add(media_file)
+
         voice_record = MessagesVoice(
             id=uuid.uuid4(),
             event_id=event.id,

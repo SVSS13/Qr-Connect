@@ -17,6 +17,40 @@ router = APIRouter()
 
 VALID_ACTION_TYPES = {"alert", "message", "voice", "location", "photo", "video", "custom"}
 
+ACTION_SYNONYMS = {
+    "image": "photo",
+    "picture": "photo",
+    "photos": "photo",
+    "photo note": "photo",
+    "photonote": "photo",
+    "clip": "video",
+    "movie": "video",
+    "videos": "video",
+    "video note": "video",
+    "videonote": "video",
+    "audio": "voice",
+    "voice note": "voice",
+    "voicenote": "voice",
+    "mic": "voice",
+    "gps": "location",
+    "map": "location",
+    "pin": "location",
+    "msg": "message",
+    "text": "message",
+    "notification": "alert",
+    "warn": "alert",
+    "warning": "alert",
+}
+
+
+def normalize_action_type(raw_type: str | None) -> str:
+    """Normalize action type string, handling whitespace, case, and friendly synonyms."""
+    if not raw_type:
+        return "alert"
+    cleaned = raw_type.strip().lower()
+    return ACTION_SYNONYMS.get(cleaned, cleaned)
+
+
 
 async def _verify_card_ownership(
     card_id: uuid.UUID,
@@ -94,16 +128,17 @@ async def create_action(
     """Add a new action to a QR card."""
     await _verify_card_ownership(card_id, current_user, db)
 
-    if payload.action_type not in VALID_ACTION_TYPES:
+    norm_type = normalize_action_type(payload.action_type)
+    if norm_type not in VALID_ACTION_TYPES:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=f"Invalid action_type. Must be one of: {', '.join(sorted(VALID_ACTION_TYPES))}",
+            detail=f"Invalid action_type '{payload.action_type}'. Must be one of: {', '.join(sorted(VALID_ACTION_TYPES))}",
         )
 
     action = QrAction(
         qr_card_id=card_id,
         label=payload.label,
-        action_type=payload.action_type,
+        action_type=norm_type,
         icon=payload.icon,
         sort_order=payload.sort_order,
         config=payload.config,
@@ -128,11 +163,14 @@ async def update_action(
     update_data = payload.model_dump(exclude_unset=True)
 
     # Validate action_type if being updated
-    if "action_type" in update_data and update_data["action_type"] not in VALID_ACTION_TYPES:
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=f"Invalid action_type. Must be one of: {', '.join(sorted(VALID_ACTION_TYPES))}",
-        )
+    if "action_type" in update_data and update_data["action_type"] is not None:
+        norm_type = normalize_action_type(update_data["action_type"])
+        if norm_type not in VALID_ACTION_TYPES:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail=f"Invalid action_type '{update_data['action_type']}'. Must be one of: {', '.join(sorted(VALID_ACTION_TYPES))}",
+            )
+        update_data["action_type"] = norm_type
 
     for field, value in update_data.items():
         setattr(action, field, value)

@@ -47,6 +47,8 @@ class InboxFragment : Fragment() {
             val filterType = when (checkedId) {
                 R.id.chipAlerts -> "alert"
                 R.id.chipMessages -> "message"
+                R.id.chipPhotos -> "photo"
+                R.id.chipVideos -> "video"
                 R.id.chipVoice -> "voice"
                 R.id.chipLocation -> "location"
                 else -> null

@@ -52,6 +52,20 @@
                 android:text="Messages" />
 
             <com.google.android.material.chip.Chip
+                android:id="@+id/chipPhotos"
+                style="@style/Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Photos" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipVideos"
+                style="@style/Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Videos" />
+
+            <com.google.android.material.chip.Chip
                 android:id="@+id/chipVoice"
                 style="@style/Widget.Material3.Chip.Filter"
                 android:layout_width="wrap_content"

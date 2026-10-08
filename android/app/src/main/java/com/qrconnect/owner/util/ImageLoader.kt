@@ -51,8 +51,8 @@ object ImageLoader {
             val url = URL(urlString)
             val connection = url.openConnection() as HttpURLConnection
             connection.doInput = true
-            connection.connectTimeout = 8000
-            connection.readTimeout = 8000
+            connection.connectTimeout = 30000
+            connection.readTimeout = 30000
             connection.connect()
             val input = connection.inputStream
             BitmapFactory.decodeStream(input)

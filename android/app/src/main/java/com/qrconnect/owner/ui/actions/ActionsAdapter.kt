@@ -28,8 +28,18 @@ class ActionsAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(action: QrActionDto) {
+            val (icon, typeName) = when (action.actionType.lowercase()) {
+                "photo" -> "📸" to "Photo Note"
+                "video" -> "🎥" to "Video Note"
+                "alert" -> "🚨" to "Quick Alert"
+                "message" -> "💬" to "Text Message"
+                "voice" -> "🎙️" to "Voice Note"
+                "location" -> "📍" to "Location Pin"
+                else -> "⚡" to action.actionType.replaceFirstChar { it.uppercase() }
+            }
+            binding.tvActionIcon.text = icon
             binding.tvActionLabel.text = action.label
-            binding.tvActionType.text = action.actionType.uppercase()
+            binding.tvActionType.text = typeName
 
             // Remove listener before setting checked state to avoid unwanted triggers
             binding.switchEnabled.setOnCheckedChangeListener(null)

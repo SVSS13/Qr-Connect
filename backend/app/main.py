@@ -3,12 +3,17 @@
 import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api import auth, cards, actions, settings_router, public, events, messages
 from app.core.config import settings
+from app.core.database import get_db
+from app.models.media_file import MediaFile
 
 logger = logging.getLogger(__name__)
 
@@ -61,9 +66,41 @@ Path("uploads/voice").mkdir(parents=True, exist_ok=True)
 Path("uploads/photos").mkdir(parents=True, exist_ok=True)
 Path("uploads/videos").mkdir(parents=True, exist_ok=True)
 
-# Static and Uploaded files
+# Static assets
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
+# Self-healing uploads endpoint: serves from disk cache or restores from PostgreSQL
+@app.get("/uploads/{folder}/{filename}", tags=["uploads"])
+async def serve_uploaded_file(
+    folder: str,
+    filename: str,
+    db: AsyncSession = Depends(get_db),
+):
+    safe_folder = Path(folder).name
+    safe_filename = Path(filename).name
+    file_path = Path("uploads") / safe_folder / safe_filename
+
+    # 1. Serve immediately from disk if available
+    if file_path.is_file():
+        return FileResponse(file_path)
+
+    # 2. Ephemeral disk restoration: Query PostgreSQL media_files table
+    target_rel_path = f"uploads/{safe_folder}/{safe_filename}"
+    result = await db.execute(
+        select(MediaFile).where(MediaFile.file_path == target_rel_path)
+    )
+    media = result.scalar_one_or_none()
+
+    if media and media.data:
+        try:
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            file_path.write_bytes(media.data)
+            return FileResponse(file_path, media_type=media.mime_type)
+        except Exception as e:
+            logger.warning("Could not cache restored media file to disk: %s", e)
+            return Response(content=media.data, media_type=media.mime_type or "application/octet-stream")
+
+    raise HTTPException(status_code=404, detail="Media file not found")
 
 # API Routers — Owner (authenticated)
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
