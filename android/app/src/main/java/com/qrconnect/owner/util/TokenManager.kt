@@ -2,8 +2,10 @@ package com.qrconnect.owner.util
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Base64
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import org.json.JSONObject
 import java.io.Serializable
 
 data class SavedAccount(
@@ -16,13 +18,17 @@ data class SavedAccount(
 
 object TokenManager {
     private var prefs: SharedPreferences? = null
+    private var appContext: Context? = null
     private val gson = Gson()
 
     fun init(context: Context) {
+        appContext = context.applicationContext
         if (prefs == null) {
             prefs = context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE)
         }
     }
+
+    fun getContext(): Context? = appContext
 
     fun saveSession(
         userId: String,
@@ -83,7 +89,44 @@ object TokenManager {
 
     fun getFcmToken(): String? = prefs?.getString(Constants.KEY_FCM_TOKEN, null)
 
-    fun isLoggedIn(): Boolean = !getAccessToken().isNullOrBlank()
+    fun isAccessTokenExpired(): Boolean {
+        val token = getAccessToken() ?: return true
+        return isJwtExpired(token, marginSeconds = 10)
+    }
+
+    fun isRefreshTokenExpired(): Boolean {
+        val token = getRefreshToken() ?: return true
+        return isJwtExpired(token, marginSeconds = 0)
+    }
+
+    private fun isJwtExpired(jwt: String, marginSeconds: Long = 0): Boolean {
+        return try {
+            val parts = jwt.split(".")
+            if (parts.size < 2) return true
+            val payloadBytes = Base64.decode(
+                parts[1],
+                Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP
+            )
+            val json = JSONObject(String(payloadBytes, Charsets.UTF_8))
+            val exp = json.optLong("exp", 0L)
+            if (exp == 0L) return false
+            val currentSeconds = System.currentTimeMillis() / 1000
+            currentSeconds >= (exp - marginSeconds)
+        } catch (e: Exception) {
+            true
+        }
+    }
+
+    fun isLoggedIn(): Boolean {
+        val access = getAccessToken()
+        val refresh = getRefreshToken()
+        if (access.isNullOrBlank() && refresh.isNullOrBlank()) return false
+        // If refresh token exists and is valid, the session is active/recoverable
+        if (!refresh.isNullOrBlank() && !isRefreshTokenExpired()) return true
+        // If access token exists and is still valid
+        if (!access.isNullOrBlank() && !isAccessTokenExpired()) return true
+        return false
+    }
 
     private fun updateCurrentAccountInSavedList() {
         val userId = getUserId() ?: return

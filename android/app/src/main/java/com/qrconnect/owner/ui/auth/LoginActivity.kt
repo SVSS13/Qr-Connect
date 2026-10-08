@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.snackbar.Snackbar
 import com.qrconnect.owner.databinding.ActivityLoginBinding
 import com.qrconnect.owner.ui.dashboard.DashboardActivity
 import com.qrconnect.owner.util.NetworkResult
@@ -17,15 +18,25 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // If already logged in AND not adding an account, navigate straight to Dashboard
         val isAddingAccount = intent.getBooleanExtra("EXTRA_ADD_ACCOUNT", false)
-        if (!isAddingAccount && viewModel.isLoggedIn()) {
+        val isSessionExpired = intent.getBooleanExtra("EXTRA_SESSION_EXPIRED", false)
+
+        // If already logged in AND not adding an account or recovering from expired session, navigate to Dashboard
+        if (!isAddingAccount && !isSessionExpired && viewModel.isLoggedIn()) {
             navigateToDashboard()
             return
         }
 
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        if (isSessionExpired) {
+            Snackbar.make(
+                binding.root,
+                "Your session has expired. Please sign in again to continue.",
+                Snackbar.LENGTH_LONG
+            ).show()
+        }
 
         setupListeners()
         observeViewModel()

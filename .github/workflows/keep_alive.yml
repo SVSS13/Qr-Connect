@@ -1,0 +1,25 @@
+name: Render Service Keep-Alive
+
+on:
+  schedule:
+    # Run every 12 minutes to prevent Render free-tier containers from spinning down
+    - cron: '*/12 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    name: Ping Render Health Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Ping QR Connect API Health
+        run: |
+          echo "Pinging QR Connect live API..."
+          RESPONSE=$(curl -s --connect-timeout 30 --max-time 60 https://qrconnect-api.onrender.com/health)
+          echo "Response: $RESPONSE"
+          if echo "$RESPONSE" | grep -q "healthy"; then
+            echo "Render API is online and healthy."
+          else
+            echo "API check warning: unexpected response"
+          fi
